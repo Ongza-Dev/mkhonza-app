@@ -1,0 +1,71 @@
+variables:
+  MAVEN_OPTS: "-Xmx512m -Xms256m"
+
+stages:
+  - build
+  - unit-test
+  - checkstyle
+  - sonar-analysis
+
+cache:
+  paths:
+    - .m2/repository/
+
+build:
+  stage: build
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - mvn clean install -DskipTests
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+  only:
+    - main
+    - merge_requests
+
+unit-test:
+  stage: unit-test
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - mvn test
+  artifacts:
+    paths:
+      - target/surefire-reports/
+    expire_in: 1 week
+    when: always
+  only:
+    - main
+    - merge_requests
+
+checkstyle:
+  stage: checkstyle
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - mvn checkstyle:checkstyle
+  artifacts:
+    paths:
+      - target/checkstyle-result.xml
+  only:
+    - main
+    - merge_requests
+
+sonar-analysis:
+  stage: sonar-analysis
+  image: sonarsource/sonar-scanner-cli:latest
+  script:
+    - sonar-scanner
+      -Dsonar.login=$LOGIN
+      -Dsonar.host.url=$HOST
+      -Dsonar.organization=$Organization
+      -Dsonar.projectKey=$Project
+      -Dsonar.projectName=vprofile-repo
+      -Dsonar.projectVersion=1.0
+      -Dsonar.sources=src/
+      -Dsonar.java.binaries=target/classes/com/visualpathit/account/controller/
+      -Dsonar.junit.reportsPath=target/surefire-reports/
+      -Dsonar.jacoco.reportsPath=target/jacoco.exec
+      -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml
+  only:
+    - main
+    - merge_requests
