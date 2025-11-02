@@ -1,0 +1,14 @@
+# Prompt for GitLab CI/CD Pipeline
+Create a GitLab CI/CD pipeline (.gitlab-ci.yml) with the following specifications:
+
+- 4 stages: lint, package, deploy, drift-check
+- Variables: HELM_CHART_PATH="./vprofile-chart", CHART_NAME="vprofile-chart", EKS_CLUSTER_NAME="vprofile-eks-cluster", AWS_DEFAULT_REGION="us-east-1"
+- All jobs use ec2_2 runner tag
+
+Jobs:
+1. helm-lint: Alpine image, install Helm 3, lint charts, run on MR and main
+2. helm-package: Alpine image, install Helm 3, package charts to artifacts (1 week expiry), run on main only
+3. deploy: alpine/k8s:1.28.4 image, install AWS CLI, configure kubectl for EKS, helm upgrade/install to vprofile namespace with Docker registry secrets, run on main and schedules
+4. drift-detection: Same as deploy but run helm diff and dry-run, run on schedules only, allow failure
+
+Use environment variables for Docker registry credentials: DOCKER_REGISTRY_SERVER, DOCKER_REGISTRY_USERNAME, DOCKER_REGISTRY_PASSWORD

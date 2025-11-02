@@ -1,0 +1,21 @@
+#Install AWS CLI.
+sudo dnf install -y unzip 
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+aws --version
+
+# Install kubectl
+curl -LO "https://dl.k8s.io/release/v1.28.4/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+kubectl version --client
+
+
+# Get Kube Config file
+aws eks update-kubeconfig --name vprofile-eks-cluster --region us-east-1
+
+# Create controller
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.3/deploy/static/provider/aws/deploy.yaml
+
+

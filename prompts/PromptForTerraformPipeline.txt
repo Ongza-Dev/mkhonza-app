@@ -1,0 +1,28 @@
+Create a GitLab CI/CD pipeline (.gitlab-ci.yml) for Terraform EKS infrastructure with these features:
+
+1. *Pipeline Triggers*: MR events, main branch pushes, scheduled runs (block feature branches)
+
+2. *Stages*: validate → plan → apply → drift-detection → notify → destroy
+
+3. *Configuration*:
+   - need to add GitLab HTTP backend authentication for Terraform state with proper locking mechanism as environment variables. 
+   - Cache .terraform directory
+   - Tags: ec2 for all jobs
+
+4. *Jobs*:
+   - validate: terraform fmt -check, terraform validate (MR only)
+   - plan: create planfile artifact (MR only)
+   - apply: manual approval for main branch, with production environment. terraform plan command should be run in this stage
+   - drift-check: scheduled terraform plan with detailed-exitcode
+   - destroy: manual with safety conditions (DESTROY_MODE=true + commit message contains DESTROY_CLUSTER)
+
+5. *Slack Notifications*:
+   - drift-notify: success/failure messages for scheduled runs
+   - failure-notify: pipeline failures with stage context. Notification should wait until the previous stage is completed either automatically or manually. 
+
+   - success-notify: successful pipeline notification with stage context. Notification should wait until the previous stage is completed either automatically or manually. 
+6. - Notification jobs use `before_script: []` to skip terraform init
+
+
+
+Include all necessary GitLab HTTP backend variables for state management and locking.

@@ -1,0 +1,15 @@
+Generate a GitLab CI/CD pipeline (.gitlab-ci.yml) for a Maven-based Java project with these specifications:
+
+Stages: build, unit-test
+
+Docker image: maven:3.9-eclipse-temurin-21, mention image at the stage/job level not global level
+
+Build stage: run "mvn clean install -DskipTests", save target/ artifacts (1 hour expiry)
+
+Unit-test stage: run "mvn test", save target/surefire-reports/ artifacts (1 week expiry, always collect)
+
+Use MAVEN_OPTS="-Xmx512m -Xms256m" and cache .m2/repository/
+
+Trigger only on merge requests or main branch commits
+
+Keep it minimal and functional

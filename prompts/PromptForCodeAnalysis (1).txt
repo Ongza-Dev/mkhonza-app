@@ -1,0 +1,23 @@
+Now enhance the pipeline by adding static code analysis:
+
+- Add two new stages: `checkstyle` and `sonar-analysis`
+- For `checkstyle`:
+  - Use the same Maven image
+  - Run `mvn checkstyle:checkstyle` and store `target/checkstyle-result.xml` as an artifact
+
+- For `sonar-analysis`:
+  - Use `sonarsource/sonar-scanner-cli:latest`
+  - Run the scanner with these parameters:
+    - `-Dsonar.login=$LOGIN`
+    - `-Dsonar.host.url=$HOST`
+    - `-Dsonar.organization=$Organization`
+    - `-Dsonar.projectKey=$Project`
+    - `-Dsonar.projectName=vprofile-repo`
+    - `-Dsonar.projectVersion=1.0`
+    - `-Dsonar.sources=src/`
+    - `-Dsonar.java.binaries=target/classes/com/visualpathit/account/controller/`
+    - `-Dsonar.junit.reportsPath=target/surefire-reports/`
+    - `-Dsonar.jacoco.reportsPath=target/jacoco.exec`
+    - `-Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml`
+
+- Apply rules to only trigger jobs on `merge_request_event` or `main` branch

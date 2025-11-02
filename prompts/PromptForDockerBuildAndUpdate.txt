@@ -1,0 +1,37 @@
+
+- Add two stages: `docker-build`, and `update-deployment`
+
+- For `docker-build`:
+  - Use `docker:latest` with `docker:dind` service
+  - Build image using Dockerfile at `Docker-files/app/multistage/Dockerfile`
+  - Tag and push to GitLab registry with commit SHA
+
+- For `update-deployment`:
+  - Use `alpine:latest`
+  - Clone Helm chart repo using `$CHARTS_REPO_URL` and `$CHARTS_REPO_TOKEN`
+  - Update `image:` and `tag:` values in `vprofile-chart/values.yaml`.
+  - Write a sed command to update only the image: and tag: values in the app: section of this YAML file, without affecting any other section.
+  
+  - For refrence: vprofile-chart/values.yaml file content for app image and tag update.   # App configuration
+  app:
+    name: vproapp
+    replicaCount: 1
+    image: 
+    tag: 
+    imagePullPolicy: Always
+    serviceType: ClusterIP
+    servicePort: 8080
+    serviceTargetPort: 8080
+
+  # Database configuration
+  db:
+    name: vprodb
+    replicaCount: 1
+    image: 
+    tag: 
+
+  - Commit and push changes using Git
+
+Add necessary variables like `$CI_REGISTRY`, `$CI_COMMIT_SHA`, etc., 
+Apply rules to  trigger Docker build job on `merge_request_event` or `main` branch
+Apply rules to  trigger Update deployment job on  `main` branch only

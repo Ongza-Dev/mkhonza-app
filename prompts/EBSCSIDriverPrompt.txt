@@ -1,0 +1,27 @@
+Need to run commands mentioned below. This should be part of terraform code.
+
+###Amazon EBS CSI driver on your EKS cluster using IAM Roles for Service Accounts (IRSA):###
+# 1. Set AWS region
+export AWS_REGION=us-east-1
+
+# 2. Associate OIDC provider with your EKS cluster
+eksctl utils associate-iam-oidc-provider \
+  --region us-east-1 \
+  --cluster vprofile-eks-cluster \
+  --approve
+
+# 3. Create IAM role for the EBS CSI driver
+eksctl create iamserviceaccount \
+  --name ebs-csi-controller-sa \
+  --namespace kube-system \
+  --cluster vprofile-eks-cluster \
+  --region us-east-1 \
+  --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+  --approve \
+  --role-only \
+  --role-name AmazonEKS_EBS_CSI_DriverRole
+
+# 4. Get the IAM role ARN
+aws iam get-role --role-name AmazonEKS_EBS_CSI_DriverRole \
+  --query "Role.Arn" \
+  --output text
