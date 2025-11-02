@@ -1,0 +1,37 @@
+variables:
+  MAVEN_OPTS: "-Xmx512m -Xms256m"
+
+stages:
+  - build
+  - unit-test
+
+cache:
+  paths:
+    - .m2/repository/
+
+build:
+  stage: build
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - mvn clean install -DskipTests
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+  only:
+    - main
+    - merge_requests
+
+unit-test:
+  stage: unit-test
+  image: maven:3.9-eclipse-temurin-21
+  script:
+    - mvn test
+  artifacts:
+    paths:
+      - target/surefire-reports/
+    expire_in: 1 week
+    when: always
+  only:
+    - main
+    - merge_requests
