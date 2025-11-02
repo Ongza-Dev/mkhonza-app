@@ -1,0 +1,9 @@
+Create a Helm chart from the Kubernetes manifest in the kubedefs folder. 
+Requirements:
+- Chart name: vprofile-chart
+- Separate each resource type into individual template files (deployment, service, ingress, secret, pvc, etc.)
+- Use separate variables section for app, db, memcached, rabbitmq, initcontainers, ingress, secrets, dockerregistry  in values.yaml
+- one level nesting in values.yaml file.
+- Include Docker registry secret support for private image registries
+- Set all image tags to "latest" by default
+- Keep it simple and minimal
