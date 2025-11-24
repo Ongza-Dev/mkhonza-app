@@ -1,0 +1,27 @@
+Clone project source code from github 
+git clone https://github.com/devopshydclub/vprofile-project.git 
+
+cd into the folder 
+cd vprofile-project 
+
+List all the branches 
+git branch -a 
+
+Checkout to all the branches 
+for i in `git branch -a | grep remotes | grep -v HEAD | grep -v master | 
+cut -d / -f3`; do git checkout $i;done 
+
+Fetch all the tags 
+git fetch --tags 
+
+Remove remote github URL 
+git remote rm origin 
+
+Add new remote URL 
+git remote add origin <url to NEW repo> 
+
+Push all the branches  
+git push origin --all 
+
+Push all the tags 
+git push --tags 
