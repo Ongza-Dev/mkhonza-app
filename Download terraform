@@ -1,0 +1,33 @@
+Powershell commands to wnload terraform
+
+Here are the complete PowerShell commands to download and install Terraform v1.14.0:
+
+# Create terraform directory
+New-Item -ItemType Directory -Force -Path "C:\terraform"
+
+# Download Terraform v1.14.0
+Invoke-WebRequest -Uri "https://releases.hashicorp.com/terraform/1.14.0/terraform_1.14.0_windows_amd64.zip" -OutFile "C:\terraform\terraform.zip"
+
+# Extract the zip file
+Expand-Archive -Path "C:\terraform\terraform.zip" -DestinationPath "C:\terraform" -Force
+
+# Remove zip file
+Remove-Item "C:\terraform\terraform.zip"
+
+# Add to PATH permanently
+$currentPath = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::User)
+if ($currentPath -notlike "*C:\terraform*") {
+    [Environment]::SetEnvironmentVariable("PATH", $currentPath + ";C:\terraform", [EnvironmentVariableTarget]::User)
+}
+
+# Refresh PATH for current session
+$env:PATH = [Environment]::GetEnvironmentVariable("PATH", [EnvironmentVariableTarget]::User)
+
+Copy
+powershell
+After running these commands, restart your PowerShell/Command Prompt and verify:
+
+terraform version
+
+Copy
+powershell
